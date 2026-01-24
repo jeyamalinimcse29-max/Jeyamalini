@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Helmet - Emergency Response</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .helmet-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .ambulance-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .hospital-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .police-icon {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .contact-icon {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            color: white;
+        }
+
+        .card h2 {
+            font-size: 1.4em;
+            color: #333;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.standby {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.alert {
+            background: #f8d7da;
+            color: #721c24;
+            animation: pulse 2s infinite;
+        }
+
+        .info-item {
+            margin: 12px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .emergency-section {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease;
+        }
+
+        .emergency-section h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .emergency-button {
+            background: white;
+            color: #ff6b6b;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .emergency-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .sensor-reading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #e8f4f8;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
+        .sensor-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: #ddd;
+            border-radius: 10px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .sensor-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Smart Helmet Emergency Response System</h1>
+            <p>Real-time accident detection and automated emergency dispatch</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Smart Helmet Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon helmet-icon">⛑️</div>
+                    <h2>Smart Helmet</h2>
+                </div>
+                <span class="status active">● ACTIVE</span>
+                
+                <div class="sensor-reading">
+                    <span class="info-label">Impact Sensor</span>
+                    <div class="sensor-bar">
+                        <div class="sensor-fill" style="width: 15%"></div>
+                    </div>
+                    <span>Normal</span>
+                </div>
+                
+                <div class="sensor-reading">
+                    <span class="info-label">Gyro Sensor</span>
+                    <div class="sensor-bar">
+                        <div class="sensor-fill" style="width: 30%"></div>
+                    </div>
+                    <span>Stable</span>
+                </div>
+                
+                <div class="sensor-reading">
+                    <span class="info-label">Tilt Sensor</span>
+                    <div class="sensor-bar">
+                        <div class="sensor-fill" style="width: 20%"></div>
+                    </div>
+                    <span>Normal</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Connection</span>
+                    <span class="info-value">✓ Bluetooth Connected</span>
+                </div>
+            </div>
+
+            <!-- Mobile App Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon helmet-icon">📱</div>
+                    <h2>Mobile App</h2>
+                </div>
+                <span class="status active">● MONITORING</span>
+                
+                <div class="info-item">
+                    <span class="info-label">GPS Status</span>
+                    <span class="info-value">✓ Location Active</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Current Location</span>
+                    <span class="info-value">Chennai, TN</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">User Profile</span>
+                    <span class="info-value">Rider #12345</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Cloud Sync</span>
+                    <span class="info-value">✓ Connected</span>
+                </div>
+            </div>
+
+            <!-- Ambulance Service Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon ambulance-icon">🚑</div>
+                    <h2>Ambulance Service</h2>
+                </div>
+                <span class="status standby">● ON STANDBY</span>
+                
+                <div class="info-item">
+                    <span class="info-label">Nearest Unit</span>
+                    <span class="info-value">2.3 km away</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Response Time</span>
+                    <span class="info-value">~6 minutes</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">GPS Routing</span>
+                    <span class="info-value">Ready</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Auto-dispatch</span>
+                    <span class="info-value">✓ Enabled</span>
+                </div>
+            </div>
+
+            <!-- Hospital Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon hospital-icon">🏥</div>
+                    <h2>Hospital</h2>
+                </div>
+                <span class="status standby">● READY</span>
+                
+                <div class="info-item">
+                    <span class="info-label">Nearest Hospital</span>
+                    <span class="info-value">Apollo Hospital</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Distance</span>
+                    <span class="info-value">4.8 km</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Pre-alert System</span>
+                    <span class="info-value">✓ Active</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Treatment Bay</span>
+                    <span class="info-value">Available</span>
+                </div>
+            </div>
+
+            <!-- Police/Fire Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon police-icon">👮</div>
+                    <h2>Police / Fire</h2>
+                </div>
+                <span class="status standby">● ON STANDBY</span>
+                
+                <div class="info-item">
+                    <span class="info-label">Station</span>
+                    <span class="info-value">Chengalpattu PS</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Response Unit</span>
+                    <span class="info-value">Ready</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Incident Alert</span>
+                    <span class="info-value">Auto-notify</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Location Access</span>
+                    <span class="info-value">✓ Granted</span>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon contact-icon">📞</div>
+                    <h2>Emergency Contacts</h2>
+                </div>
+                <span class="status active">● CONFIGURED</span>
+                
+                <div class="info-item">
+                    <span class="info-label">Primary Contact</span>
+                    <span class="info-value">+91 98xxx xxxxx</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Secondary Contact</span>
+                    <span class="info-value">+91 97xxx xxxxx</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">SMS Alert</span>
+                    <span class="info-value">✓ Enabled</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">App Notification</span>
+                    <span class="info-value">✓ Enabled</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Alert Section -->
+        <div class="emergency-section">
+            <h2>🚨 Automatic Accident Detection</h2>
+            <p style="font-size: 1.1em; margin: 15px 0;">When sensors detect an accident, emergency services are automatically dispatched to your location</p>
+            <div style="margin: 20px 0;">
+                <div style="display: inline-block; margin: 10px 20px;">
+                    <div style="font-size: 2em; font-weight: bold;">< 30 sec</div>
+                    <div>Detection Time</div>
+                </div>
+                <div style="display: inline-block; margin: 10px 20px;">
+                    <div style="font-size: 2em; font-weight: bold;">AI-Powered</div>
+                    <div>Severity Analysis</div>
+                </div>
+                <div style="display: inline-block; margin: 10px 20px;">
+                    <div style="font-size: 2em; font-weight: bold;">100%</div>
+                    <div>Automated Response</div>
+                </div>
+            </div>
+            <button class="emergency-button" onclick="alert('Emergency test mode - In real scenario, all services would be automatically dispatched!')">
+                TEST EMERGENCY SYSTEM
+            </button>
+        </div>
+    </div>
+</body>
+</html>
